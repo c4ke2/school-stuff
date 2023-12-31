@@ -1,0 +1,209 @@
+---A001---
+Wright    6-11
+Jackson   0-1
+Event     5-5
+
+---A002---
+Roberts   9-11
+Event     5-5
+
+---A003---
+Event     5-5
+Jackson   10-10
+
+---A004---
+Event     5-5
+Jones     10-10
+
+---A005---
+Event     5-5
+
+---A007---
+Hill      9-10
+Jackson   0-6
+
+---A008---
+Campbell  0-10
+
+---A0012---
+Scott     11-11
+Event     3-3
+Nguyen    7-10
+
+---A0013---
+Taylor    9-11
+Event     3-3
+
+---A0014---
+Event     3-3
+Walker    9-11
+
+---A0015---
+Event     3-3
+
+---A0016---
+Event     3-3
+
+---A0017---
+Event     3-3
+
+---A0018---
+Event     3-3
+
+---A0019---
+Event     3-3
+
+---A0020---
+Scott     1-11
+
+---B0032---
+Adams     1-3
+
+---B0045---
+Robinson  3-4
+Adams     7-7
+Lewis     11-11
+Event     1-1
+
+---B0046---
+Moore     6-11
+Event     1-1
+
+---B0047---
+Event     1-1
+
+---B0048---
+Event     1-1
+
+---B0049---
+Event     1-1
+
+---B0050---
+Smith     11-11
+
+---B0051---
+Rivera    9-11
+
+---C0061---
+Nelson    6-7
+Walker    9-9
+Martinez  11-11
+
+---C0062---
+Thompson  6-8
+
+---C0067---
+Clark     3-3
+Martinez  10-10
+Young     6-6
+
+---C0068---
+Green     9-11
+
+---C0076---
+Lopez     2-3
+Perez     6-7
+Event     1-1
+
+---C0077---
+Scott     1-2
+Thomas    4-10
+
+---C0078---
+Johnson   0-8
+
+---C0079---
+Brown     1-5
+Miller    6-10
+
+---C0080---
+Scott     2-7
+
+---C0085---
+Hall      1-8
+
+---C0086---
+Event     5-5
+Hall      6-7
+
+---C0087---
+Event     5-5
+
+---C0088---
+Event     5-5
+
+---C0089---
+Event     5-5
+
+---C0090---
+Jackson   7-9
+Nguyen    10-11
+Clark     0-0
+Rodriguez 1-6
+
+---C0091---
+Brown     7-11
+Lee       0-4
+
+---C0092---
+Lee       8-8
+
+---C0093---
+King      3-11
+
+---C0105---
+Thompson  9-9
+Roberts   2-6
+Nguyen    10-11
+
+---C0106---
+Event     9-9
+White     10-10
+
+---C0107---
+Event     9-9
+
+---C0108---
+Wright    2-10
+
+---D0112---
+Event     0-0
+Harris    7-10
+
+---D0113---
+Event     0-0
+
+---D0114---
+Event     0-0
+
+---D0115---
+Event     0-0
+
+---D0116---
+Event     0-0
+
+---D0117---
+Event     0-0
+
+---D0146---
+White     4-7
+
+---D0147---
+Hernandez 1-8
+
+---D0148---
+King      2-7
+
+---E0167---
+Baker     4-11
+Perez     0-1
+
+---E0168---
+Carter    1-6
+
+---E0169---
+Garcia    6-6
+
+---E0170---
+Brown     0-9
+

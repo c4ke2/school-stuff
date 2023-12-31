@@ -1,0 +1,298 @@
+<html>
+<head>
+	<title>Not Twitter</title>
+	<script>
+		var currentName = null;
+
+		var tweetList = [];
+	        // on load, get the tweets from server
+		window.onload = function()
+		{
+			console.log("window loaded");
+			let tweetPage = document.getElementById("tweetPage");
+			let loginPage = document.getElementById("loginPage");
+			loginPage.style.display = "none";
+			tweetPage.style.display = "none";
+			getTweetFromServer();
+		}
+		//request to fetch list of tweets from the server
+		function getTweetFromServer()
+		{
+			let xhr = new XMLHttpRequest();
+			xhr.addEventListener("load",getTweetListener);
+			xhr.open("GET","/api/tweet");
+			xhr.send();
+		}
+		//we got a response for asking for tweet list, parse it
+		//and call to update the page to reflect that
+		function getTweetListener()
+		{
+			var str = this.responseText;
+			tweetList = JSON.parse(str);
+			resume();
+		}
+		//if there is a cookie, go to tweet page
+		//if there is no cookie, go to login page
+		function resume()
+		{
+			//check for cookie
+			if(document.cookie.indexOf("userLogin=")<0)
+			{//not logged in
+				showLoginPage();
+				hideTweetPage();
+			}
+			else
+			{//logged in
+				currentName = readCookie("userLogin");
+				showTweetPage();
+				hideLoginPage();
+			}
+		}
+		//hide the login page UI
+		function hideLoginPage()
+		{
+			let loginPage = document.getElementById("loginPage");
+			loginPage.style.display = "none";
+		}
+		//show the login page UI
+		function showLoginPage()
+		{
+			let loginPage = document.getElementById("loginPage");
+			loginPage.style.display = "inline";
+		}
+		//hide the Tweet page UI
+		function hideTweetPage()
+		{
+			let tweetPage = document.getElementById("tweetPage");
+			tweetPage.style.display = "none";
+			let tweetField = document.getElementById("tweetField");
+			tweetField.value="";
+		}
+		//show the tweet page UI
+		function showTweetPage()
+		{
+			let tweetPage = document.getElementById("tweetPage");
+			let welcome = document.getElementById("welcome");
+			welcome.innerHTML= "Welcome back, "+currentName+"!";
+			listToHtml();
+			tweetPage.style.display = "inline";
+		}
+		//convert the json list to appear on the screen
+		function listToHtml()
+		{
+			clearTweetHtml();
+			let tweets = document.getElementById("tweetList");
+			for(var i=0;i<tweetList.length;i++)
+			{
+				tweetToHtml(tweetList[i],tweets,i);
+			}
+		}
+		//conert single json tweet to a tweet on the page
+		function tweetToHtml(tweet,tweetHtml,id)
+		{
+			var tweetStr = tweet.content + " | -"+tweet.author;
+			let newTweet = document.createElement("p");
+			newTweet.innerHTML = tweet.content + " | -"+tweet.author+"\t";
+			newTweet.id = "tweet"+id;
+	
+			if(currentName===tweet.author)
+			{//delete buttons only logged in as author
+				let newDelete = document.createElement("button");
+				newDelete.innerHTML = "Delete";
+				newDelete.onclick = function()
+				{
+					removeTweet(newDelete,tweet);
+				}
+				newTweet.appendChild(newDelete);
+			}
+
+			tweetHtml.appendChild(newTweet);
+		}
+		//ask to remove a tweet
+		function removeTweet(newDelete,tweet)
+		{
+			let xhr = new XMLHttpRequest();
+			console.log("attempting to delete "+tweet.id);
+			let str = "/api/tweet/"+tweet.id;
+			xhr.open("DELETE",str);
+
+			xhr.onreadystatechange = function()
+			{//on response, call to update our tweetlist
+				if(xhr.readyState===4)
+				{
+					console.log(xhr.status);
+					console.log(xhr.responseText);
+					getTweetFromServer();
+				}
+			}
+
+			xhr.send();
+		}
+		//returns value of cookie called name
+		function readCookie(name)
+		{
+			let key = name+"="
+			var arr = document.cookie.split(";");
+			for(var i=0; i<arr.length;i++)
+			{
+				var c = arr[i];
+				while(c.charAt(0)==' ')
+					c=c.substring(key.length,c.length);
+				if(c.indexOf(key)==0)
+					return c.substring(key.length,c.length);
+				return null;
+			}
+		}
+		//removes all tweets from the display
+		function clearTweetHtml()
+		{
+			let tweets = document.getElementById("tweetList");
+			while(tweets.hasChildNodes())
+			{
+				tweets.removeChild(tweets.lastChild);
+			}
+		}
+		//login button clicked
+		function loginClicked()
+		{
+			let msg = []
+			const error = document.querySelector("#errField");
+			const username = document.querySelector("#usernameField");
+			const password = document.querySelector("#passwordField");
+
+			//check if either field empty, report that or send request
+			if(username.value==null || username.value=="")
+			{
+				msg.push("Username required.");
+			}
+			if(password.value==null || password.value=="")
+			{
+				msg.push("Password required.");
+			}
+
+                  	if(msg.length>0)
+			{
+				error.innerHTML = msg.join("\n");
+			}
+                  	else
+			{
+                  		loginAttempt(username.value,password.value,error);
+			}
+		}
+		//send login info to the server for validation
+		function loginAttempt(user,pass,error)
+		{
+			let xhr = new XMLHttpRequest();
+			xhr.open("POST","/api/login");
+			xhr.setRequestHeader("Content-Type","application/json; charset=UTF-8");
+			
+                  	var login = {username:user, password:pass};
+			xhr.onreadystatechange = function()
+			{
+				if(xhr.readyState===4)
+				{//on reply, act depending on if credentials accepted
+					console.log(xhr.status);
+					console.log(xhr.responseText);
+
+					if(xhr.status==200)
+					{//login good
+						document.cookie = "userLogin="+user+"; path=/";
+						error.innerHTML = "";
+						resume();
+					}
+					else
+					{//login fail
+						error.innerHTML = "Login failed - username or password incorrect.";
+					}
+				}
+			}
+
+			xhr.send(JSON.stringify(login));
+		}
+		//tell the server we logging off
+		function logoutAttempt()
+		{
+			let xhr = new XMLHttpRequest();
+			xhr.open("DELETE","/api/login");
+			xhr.onreadystatechange = function()
+			{
+				if(xhr.readyState===4)
+				{
+					console.log(xhr.status);
+					console.log(xhr.responseText);
+					if(xhr.status==200)
+					{
+						document.cookie = "userLogin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+						resume();
+					}
+				}
+			}
+
+			xhr.send();
+		}
+		//attempts to post a tweet
+		function postButton()
+		{
+			tweetField = document.querySelector("#tweetField");
+			if(tweetField.value==null || tweetField.value==="")
+			{
+				alert("Tweet must have text before it can be posted.");
+			}
+			else
+			{
+				addTweet(tweetField.value,currentName);
+				tweetField.value = "";	
+			}
+		}
+		//makes a post request, update webpage on success
+		function addTweet(posted, writer)
+		{
+			var tweet = { content:posted, author:writer};
+			let xhr = new XMLHttpRequest();
+			xhr.open("POST","/api/tweet");
+			xhr.setRequestHeader("Content-Type","application/json; charset=UTF-8");
+
+			xhr.onreadystatechange = function()
+			{
+				if(xhr.readyState===4)
+				{
+					console.log(xhr.status);
+					console.log(xhr.responseText);
+					getTweetFromServer();
+				}
+			}
+
+			xhr.send(JSON.stringify(tweet));
+		}
+	</script>
+</head>
+<body>
+	<div id="loginPage">
+		<h1 id="title">Not Twitter</h1>
+		<h2>Login</h2>
+		<p>Username</p>
+		<input type="text" id="usernameField">
+		<p>Password</p>
+		<input type="password" id="passwordField">
+		<p id="errField"></p>
+		<button id="loginButton" onclick="loginClicked()">Login</button>
+	</div>
+
+	<div id="tweetPage">
+		<h1>Not Twitter</h1>
+		<p id=welcome>Welcome back.</p>
+		<h3>Create Tweet</h3>
+		<input type="text" id="tweetField">
+		<button id="postTweet" onclick="postButton()">Post</button>
+		<p></p>
+		<button id="logoutButton" onclick="logoutAttempt()">Logout</button>
+		<p></p>
+		<h3>Tweets</h3>
+		<h5>Tweet | -Posted By</h5>
+
+		<div id="tweetList">
+
+		</div>
+	</div>
+</body>
+</html>
